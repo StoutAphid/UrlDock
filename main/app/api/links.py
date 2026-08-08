@@ -72,12 +72,13 @@ async def list_tags():
 
 
 @router.get("/", response_class=HTMLResponse)
-async def index(request: Request, tag: Optional[str] = None):
-    links = await get_links(tag=tag, limit=50)
+async def index(request: Request, tag: Optional[str] = None, sort: str = "newest"):
+    links = await get_links(tag=tag, limit=50, sort=sort)
     tags = await get_all_tags()
     return templates.TemplateResponse(request, "index.html", {
         "app_name": settings.app_name,
         "links": links,
         "tags": tags,
         "current_tag": tag,
+        "current_sort": sort,
     })

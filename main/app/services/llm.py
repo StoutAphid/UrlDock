@@ -10,7 +10,9 @@ SUMMARY_TAGS_PROMPT = """You are a helpful assistant that summarizes web article
 
 Given the article content below, provide:
 1. A concise summary (2-4 sentences) capturing the main points
-2. 3-6 relevant tags (lowercase, hyphenated, e.g. "machine-learning", "tutorial", "python")
+2. 2-4 relevant tags (lowercase, hyphenated, e.g. "machine-learning", "tutorial", "python")
+
+Tags should be SPECIFIC to the article's topic, not generic. Avoid: "article", "guide", "tutorial", "introduction", "overview", "basics", "fundamentals", "beginner", "advanced", "tips", "tricks", "best-practices", "how-to", "web", "development", "programming", "software", "technology", "tech", "news", "blog", "post", "read", "reading".
 
 Return ONLY valid JSON in this exact format:
 {{"summary": "Your summary here...", "tags": ["tag1", "tag2"]}}

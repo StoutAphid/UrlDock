@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     
     max_content_length: int = 50000
     summary_max_sentences: int = 4
-    max_tags: int = 6
+    max_tags: int = 4
     
     class Config:
         env_file = ".env"

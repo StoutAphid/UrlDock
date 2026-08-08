@@ -513,6 +513,8 @@ a:hover {
   background: transparent;
   box-shadow: none;
   border: none;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .section-header h2 {
@@ -526,6 +528,32 @@ a:hover {
   background: var(--accent-soft, #efe2d0);
   padding: 4px 12px;
   border-radius: var(--radius-pill);
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sort-select {
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  min-width: 160px;
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--shadow-focus);
 }
 
 .links-grid {

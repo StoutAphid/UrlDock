@@ -34,7 +34,7 @@
 
     <section class="search-section">
         <div class="search-card">
-            <form hx-get="/_ui/search" hx-target="#search-results" hx-swap="innerHTML" hx-trigger="input changed delay:300ms, search" class="search-form">
+            <form hx-get="/_ui/search" hx-target="#search-results" hx-swap="innerHTML" hx-trigger="keyup changed delay:300ms from:input, search from:input" class="search-form">
                 <label for="search" class="visually-hidden">Search your links</label>
                 <div class="search-input-wrapper">
                     <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -70,7 +70,15 @@
     <section class="links-section">
         <div class="section-header">
             <h2>{{ 'Links tagged "' ~ current_tag ~ '"' if current_tag else 'All Saved Links' }}</h2>
-            <span class="links-count" id="links-count">{{ links|length }} link{% if links|length != 1 %}s{% endif %}</span>
+            <div class="header-controls">
+                <span class="links-count" id="links-count">{{ links|length }} link{% if links|length != 1 %}s{% endif %}</span>
+                <select name="sort" class="sort-select" hx-get="/" hx-target="#links-grid" hx-swap="outerHTML" hx-include="[name='tag']" hx-push-url="true">
+                    <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest first</option>
+                    <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest first</option>
+                    <option value="title" {% if current_sort == 'title' %}selected{% endif %}>Title (A-Z)</option>
+                    <option value="most-tags" {% if current_sort == 'most-tags' %}selected{% endif %}>Most tags</option>
+                </select>
+            </div>
         </div>
         <div id="links-grid" class="links-grid" role="list">
             {% if links %}
