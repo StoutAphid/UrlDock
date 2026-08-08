@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "urldock"
+version = "1.0.0"
+description = "Smart Bookmark & Link Organizer with Semantic Search"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+    "pydantic>=2.10.0",
+    "pydantic-settings>=2.7.0",
+    "sqlmodel>=0.0.22",
+    "chromadb>=0.6.3",
+    "sentence-transformers>=3.3.0",
+    "httpx>=0.28.0",
+    "trafilatura>=2.0.0",
+    "jinja2>=3.1.5",
+    "python-multipart>=0.0.20",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.25.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["../testing"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

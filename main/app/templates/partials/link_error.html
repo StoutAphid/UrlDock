@@ -1,0 +1,11 @@
+<div class="error-state link-card" style="grid-column: 1 / -1;">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--danger);">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>
+    <h3 style="color: var(--danger); margin: 8px 0 4px;">Couldn't save this link</h3>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">{{ error }}</p>
+    <p style="color: var(--text-muted); font-size: 0.85rem; word-break: break-all;">{{ url }}</p>
+    <p style="color: var(--text-muted); font-size: 0.82rem; margin-top: 8px;">Check that Ollama is running and the model is pulled.</p>
+</div>

@@ -1,0 +1,29 @@
+<div class="search-results-card">
+    {% if results %}
+    <h4>Search Results for "{{ query }}"</h4>
+    <div class="search-results-list">
+        {% for result in results %}
+        <article class="search-result-item">
+            <h5>
+                <a href="{{ result.url }}" target="_blank" rel="noopener noreferrer">
+                    {{ result.title or "Untitled" }}
+                </a>
+            </h5>
+            {% if result.summary %}
+            <p>{{ result.summary }}</p>
+            {% endif %}
+            <div class="search-result-meta">
+                <div class="link-tags">
+                    {% for tag in result.tags %}
+                    <a href="/?tag={{ tag }}" class="tag-pill tag-pill-sm">{{ tag }}</a>
+                    {% endfor %}
+                </div>
+                <span class="relevance-score">{{ (result.score * 100)|round }}% match</span>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="no-results">No matches found for "{{ query }}". Try different keywords.</p>
+    {% endif %}
+</div>

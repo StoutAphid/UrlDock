@@ -1,0 +1,46 @@
+<article class="link-card" role="listitem" data-link-id="{{ link.id }}">
+    <div class="link-card-header">
+        <h3 class="link-title">
+            <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" title="{{ link.url }}">
+                {{ link.title or "Untitled" }}
+            </a>
+        </h3>
+        <span class="link-date">{{ link.date_saved.strftime('%b %d, %Y') }}</span>
+    </div>
+
+    {% if link.summary %}
+    <p class="link-summary">{{ link.summary }}</p>
+    {% endif %}
+
+    <div class="link-meta">
+        <div class="link-tags" role="list" aria-label="Tags">
+            {% for tag in link.tags %}
+            <a href="/?tag={{ tag }}" class="tag-pill tag-pill-sm" role="listitem">{{ tag }}</a>
+            {% endfor %}
+        </div>
+        <div class="link-actions">
+            <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm" title="Open original">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+                <span>Open</span>
+            </a>
+            <button 
+                hx-delete="/links/{{ link.id }}" 
+                hx-target="closest .link-card" 
+                hx-swap="outerHTML swap:500ms"
+                hx-confirm="Delete this link?"
+                class="btn btn-danger btn-sm"
+                title="Delete link"
+            >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                <span>Delete</span>
+            </button>
+        </div>
+    </div>
+</article>

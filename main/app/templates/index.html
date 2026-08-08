@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}{{ app_name }} - Save & Search Links{% endblock %}
+
+{% block content %}
+<div class="page-home">
+    <section class="hero-section">
+        <div class="hero-card">
+            <h2>Add a Link</h2>
+            <form hx-post="/_ui/links" hx-target="#links-grid" hx-swap="afterbegin" class="link-form" hx-on::after-request="this.reset()">
+                <div class="form-group">
+                    <label for="url" class="visually-hidden">URL to save</label>
+                    <input 
+                        type="url" 
+                        id="url" 
+                        name="url" 
+                        placeholder="https://example.com/article..." 
+                        required
+                        class="form-input"
+                        autocomplete="url"
+                    >
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" hx-disable-elt="this">
+                    <span class="btn-text">Save Link</span>
+                    <span class="btn-loading" hidden>
+                        <svg class="spinner" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="30 100" stroke-linecap="round"></circle></svg>
+                        Saving...
+                    </span>
+                </button>
+            </form>
+            <p class="form-hint">Paste any URL &mdash; we'll fetch, summarize, tag & make it searchable.</p>
+        </div>
+    </section>
+
+    <section class="search-section">
+        <div class="search-card">
+            <form hx-get="/_ui/search" hx-target="#search-results" hx-swap="innerHTML" hx-trigger="input changed delay:300ms, search" class="search-form">
+                <label for="search" class="visually-hidden">Search your links</label>
+                <div class="search-input-wrapper">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input 
+                        type="search" 
+                        id="search" 
+                        name="q" 
+                        placeholder="Search your saved links&hellip; (e.g. \"transformer attention tutorial\")"
+                        class="search-input"
+                        autocomplete="off"
+                    >
+                </div>
+            </form>
+            <div id="search-results" class="search-results"></div>
+        </div>
+    </section>
+
+    <section class="filters-section">
+        <div class="tags-filter">
+            <span class="filter-label">Filter by tag:</span>
+            <div class="tags-list" role="group" aria-label="Tag filters">
+                <a href="/" class="tag-pill {{ 'active' if not current_tag else '' }}">All</a>
+                {% for tag in tags %}
+                <a href="/?tag={{ tag }}" class="tag-pill {{ 'active' if current_tag == tag else '' }}">{{ tag }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="links-section">
+        <div class="section-header">
+            <h2>{{ 'Links tagged "' ~ current_tag ~ '"' if current_tag else 'All Saved Links' }}</h2>
+            <span class="links-count" id="links-count">{{ links|length }} link{% if links|length != 1 %}s{% endif %}</span>
+        </div>
+        <div id="links-grid" class="links-grid" role="list">
+            {% if links %}
+                {% for link in links %}
+                    {% include "partials/link_card.html" %}
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                    <h3>No links yet</h3>
+                    <p>{{ 'No links with this tag.' if current_tag else 'Add your first link above to get started.' }}</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    const toggle = document.getElementById('theme-toggle');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    const stored = localStorage.getItem('theme');
+    
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        if (toggle) {
+            toggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+        }
+    }
+    
+    // Initialize
+    if (stored) {
+        applyTheme(stored);
+    } else if (prefersDark.matches) {
+        applyTheme('dark');
+    } else {
+        applyTheme('light');
+    }
+    
+    if (toggle) {
+        toggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            applyTheme(current === 'dark' ? 'light' : 'dark');
+        });
+    }
+})();
+</script>
+{% endblock %}
