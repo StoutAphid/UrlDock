@@ -21,7 +21,12 @@ async def process_link(url: str) -> tuple[Optional[Link], Optional[str]]:
     with Session(engine) as session:
         existing = session.exec(select(Link).where(Link.url == url)).first()
         if existing:
-            return existing, "Link already exists"
+            if existing.fetch_status == "failed":
+                # Allow retry for failed links - delete and reprocess
+                session.delete(existing)
+                session.commit()
+            else:
+                return existing, "Link already exists"
         
         link = Link(url=url, fetch_status="processing")
         session.add(link)

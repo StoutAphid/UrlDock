@@ -21,10 +21,16 @@
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
         </svg>
         <div class="save-message-text">
+            {% if error == "Link already exists" %}
+            <span class="save-message-title">Link Already Exists</span>
+            <span class="save-message-detail">{{ url }}</span>
+            <span class="save-message-action">This link is already saved in your collection.</span>
+            {% else %}
             <span class="save-message-title">Unable to Process Link</span>
             <span class="save-message-detail">{{ url }}</span>
+            <span class="save-message-action">Not able to process link, please try a different link.</span>
+            {% endif %}
         </div>
-        <span class="save-message-action">Not able to process link, please try a different link.</span>
     </div>
 </div>
 {% endif %}
