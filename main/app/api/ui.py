@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request, Query, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
-from app.services.pipeline import process_link, search_links
+from app.services.pipeline import process_link, search_links, get_links
 from app.schemas import SearchResult
 
 
@@ -49,4 +49,13 @@ async def ui_search(request: Request, q: str = Query(default="", min_length=0)):
     return templates.TemplateResponse(
         request, "partials/search_results.html",
         {"results": result_models, "query": q},
+    )
+
+
+@router.get("/_ui/links-grid", response_class=HTMLResponse)
+async def ui_links_grid(request: Request, sort: str = "newest"):
+    links = await get_links(limit=50, sort=sort)
+    return templates.TemplateResponse(
+        request, "partials/links_grid.html",
+        {"links": links},
     )

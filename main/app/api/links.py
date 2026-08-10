@@ -33,11 +33,10 @@ async def create_link(link_data: LinkCreate):
 
 @router.get("/links", response_model=LinkList)
 async def list_links(
-    tag: Optional[str] = Query(None, description="Filter by tag"),
     limit: int = Query(50, ge=1, le=100),
     offset: int = Query(0, ge=0)
 ):
-    links = await get_links(tag=tag, limit=limit, offset=offset)
+    links = await get_links(limit=limit, offset=offset)
     return LinkList(links=links, total=len(links))
 
 
@@ -59,10 +58,21 @@ async def delete_link_by_id(link_id: int):
 @router.get("/search", response_model=SearchResponse)
 async def search(q: str = Query(..., min_length=1), limit: int = Query(10, ge=1, le=50)):
     results = await search_links(q, limit)
+    result_models = []
+    for r in results:
+        meta = r["metadata"]
+        result_models.append(SearchResult(
+            id=r["link_id"],
+            url=meta.get("url", ""),
+            title=meta.get("title", "Untitled"),
+            summary=r.get("document", "")[:300],
+            tags=meta.get("tags", []),
+            score=r["score"],
+        ))
     return SearchResponse(
-        results=[SearchResult(**r) for r in results],
+        results=result_models,
         query=q,
-        total=len(results)
+        total=len(result_models)
     )
 
 
@@ -72,13 +82,10 @@ async def list_tags():
 
 
 @router.get("/", response_class=HTMLResponse)
-async def index(request: Request, tag: Optional[str] = None, sort: str = "newest"):
-    links = await get_links(tag=tag, limit=50, sort=sort)
-    tags = await get_all_tags()
+async def index(request: Request, sort: str = "newest"):
+    links = await get_links(limit=50, sort=sort)
     return templates.TemplateResponse(request, "index.html", {
         "app_name": settings.app_name,
         "links": links,
-        "tags": tags,
-        "current_tag": tag,
         "current_sort": sort,
     })

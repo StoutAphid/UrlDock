@@ -13,15 +13,16 @@ summaries, and semantic search all happen on your machine (via Ollama).
 
 ---
 
-## Features (v1)
+## Features
 
 - **Add a link** — paste a URL; it's fetched, cleaned, and stored
-- **Auto-summarize** — one local LLM call produces a short summary
-- **Auto-tag** — the same call generates 3–6 relevant tags
+- **Auto-summarize** — one local LLM call produces a 2–4 sentence summary
+- **Auto-tag** — the same call generates 2–4 specific, relevant tags
 - **Semantic search** — natural-language search over your saved links
-- **Browse / filter** — card grid filterable by tag, sorted by date saved
-- **Delete** — simple confirmed removal from DB + vector store
-- **Save feedback** — real-time processing indicator, success/error messages
+- **Sort** — newest first, oldest first, or title (A–Z)
+- **Delete** — simple confirmed removal from the DB + vector store
+- **Save feedback** — live "Processing link…" indicator, success/error states
+- **Retry failed links** — re-saving a failed URL reprocesses it from scratch
 
 ---
 
@@ -58,18 +59,23 @@ No virtual environment required — `pip install -r requirements.txt` works glob
 
 ```
 UrlDock/
-├── main/                 # The application (FastAPI + Jinja2)
-│   ├── app/
-│   │   ├── api/          # Route handlers (REST + HTML endpoints)
-│   │   ├── services/     # fetcher, llm, embedder, pipeline
-│   │   ├── templates/    # Jinja2 HTML (warm/organic UI)
-│   │   ├── static/       # CSS + JS
-│   │   └── main.py       # FastAPI entrypoint
-│   ├── requirements.txt
-│   ├── .env.example
-│   └── pyproject.toml
-├── scripts/              # Utilities (e.g. models comparison runner)
-└── testing/              # pytest suite + fixtures
+└── main/                      # The application (FastAPI + Jinja2)
+    ├── app/
+    │   ├── api/               # Route handlers (REST + HTML endpoints)
+    │   ├── services/          # fetcher, llm, embedder, pipeline
+    │   ├── templates/         # Jinja2 HTML (base, index + partials)
+    │   │   └── partials/      # link cards, grid, search results, save messages
+    │   ├── static/
+    │   │   ├── css/           # styles (responsive, dark/light themes)
+    │   │   └── js/            # small vanilla-JS enhancements
+    │   ├── main.py            # FastAPI entrypoint
+    │   ├── database.py        # SQLite (SQLModel) + ChromaDB setup
+    │   ├── config.py          # .env settings
+    │   ├── models.py          # Link model
+    │   └── schemas.py         # Pydantic schemas
+    ├── requirements.txt
+    ├── .env.example
+    └── pyproject.toml
 ```
 
 ---
@@ -79,7 +85,8 @@ UrlDock/
 ### Save Link Feedback
 - **Processing** — "Processing link, Please wait..." shows immediately when you click Save
 - **Success** — "Link Processed Successfully... Please reload the page" on success
-- **Error** — "Unable to Process Link... Not able to process link, please try a different link" on failure (Cloudflare, paywalls, JS-rendered sites, etc.)
+- **Duplicate** — "Link Already Exists" when the URL is already saved
+- **Error** — "Not able to process link, please try a different link" on failure (Cloudflare, paywalls, JS-rendered sites, etc.)
 
 ---
 
@@ -88,7 +95,7 @@ UrlDock/
 | Method | Endpoint       | Purpose                                      |
 |--------|----------------|----------------------------------------------|
 | POST   | `/links`       | Add a URL (triggers the full pipeline)       |
-| GET    | `/links`       | List links, optional `?tag=` filter          |
+| GET    | `/links`       | List saved links                             |
 | GET    | `/links/{id}`  | Get one link                                 |
 | DELETE | `/links/{id}`  | Remove a link                                |
 | GET    | `/search`      | Semantic search, `?q=...`                    |
@@ -99,12 +106,12 @@ Interactive API docs at **http://127.0.0.1:8000/docs**.
 
 ---
 
-## Testing
+## Data Storage
 
-```bash
-cd main
-pytest ../testing          # run the suite (uses temp DB, no network)
-```
+- **SQLite** (`urldock.db`) — link metadata, summaries, tags
+- **ChromaDB** (`chroma_db/`) — embeddings for semantic search
+
+Both live next to the app and are ignored by git.
 
 ---
 

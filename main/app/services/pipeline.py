@@ -101,7 +101,7 @@ async def get_link(link_id: int) -> Optional[LinkRead]:
     return None
 
 
-async def get_links(tag: Optional[str] = None, limit: int = 50, offset: int = 0, sort: str = "newest") -> List[LinkRead]:
+async def get_links(limit: int = 50, offset: int = 0, sort: str = "newest") -> List[LinkRead]:
     with Session(engine) as session:
         if sort == "oldest":
             query = select(Link).where(Link.fetch_status == "ok").order_by(Link.date_saved.asc())
@@ -111,20 +111,6 @@ async def get_links(tag: Optional[str] = None, limit: int = 50, offset: int = 0,
             query = select(Link).where(Link.fetch_status == "ok")
         else:  # newest (default)
             query = select(Link).where(Link.fetch_status == "ok").order_by(Link.date_saved.desc())
-        
-        if tag:
-            all_links = session.exec(query).all()
-            filtered = [l for l in all_links if tag in l.get_tags_list()]
-            
-            if sort == "most-tags":
-                filtered.sort(key=lambda l: len(l.get_tags_list()), reverse=True)
-            elif sort == "title":
-                filtered.sort(key=lambda l: l.title or "")
-            elif sort == "oldest":
-                filtered.sort(key=lambda l: l.date_saved)
-            
-            filtered = filtered[offset:offset + limit]
-            return [LinkRead.from_model(l) for l in filtered]
         
         if sort == "most-tags":
             all_links = session.exec(query).all()

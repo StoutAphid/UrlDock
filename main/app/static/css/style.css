@@ -627,7 +627,7 @@ a:hover {
 
 .links-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
 
@@ -754,9 +754,5 @@ a:hover {
 
   .links-grid {
     grid-template-columns: 1fr;
-  }
-
-  .tagline {
-    font-size: 0.85rem;
   }
 }
