@@ -85,20 +85,3 @@ async def generate_summary_and_tags(content: str) -> tuple[Optional[str], Option
         return None, None, f"Failed to parse LLM response: {str(e)}"
     except Exception as e:
         return None, None, f"Response processing error: {str(e)}"
-
-
-async def test_ollama_connection() -> tuple[bool, str]:
-    """Test if Ollama is running and model is available."""
-    try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(f"{settings.ollama_base_url}/api/tags")
-            response.raise_for_status()
-            data = response.json()
-            
-            models = [m["name"] for m in data.get("models", [])]
-            if settings.ollama_model not in models:
-                return False, f"Model '{settings.ollama_model}' not found. Available: {models}"
-            
-            return True, "OK"
-    except Exception as e:
-        return False, f"Cannot connect to Ollama: {str(e)}"

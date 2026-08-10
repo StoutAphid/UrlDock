@@ -1,7 +1,7 @@
 from sqlmodel import Session, select
 from app.database import engine, get_chroma_client, get_chroma_collection
 from app.models import Link
-from app.schemas import LinkCreate, LinkRead
+from app.schemas import LinkRead
 from app.services.fetcher import fetch_page_content, get_content_snippet
 from app.services.llm import generate_summary_and_tags
 from app.services.embedder import store_embedding, delete_embedding, search_similar
@@ -107,17 +107,9 @@ async def get_links(limit: int = 50, offset: int = 0, sort: str = "newest") -> L
             query = select(Link).where(Link.fetch_status == "ok").order_by(Link.date_saved.asc())
         elif sort == "title":
             query = select(Link).where(Link.fetch_status == "ok").order_by(Link.title.asc())
-        elif sort == "most-tags":
-            query = select(Link).where(Link.fetch_status == "ok")
         else:  # newest (default)
             query = select(Link).where(Link.fetch_status == "ok").order_by(Link.date_saved.desc())
-        
-        if sort == "most-tags":
-            all_links = session.exec(query).all()
-            all_links.sort(key=lambda l: len(l.get_tags_list()), reverse=True)
-            all_links = all_links[offset:offset + limit]
-            return [LinkRead.from_model(l) for l in all_links]
-        
+
         query = query.offset(offset).limit(limit)
         links = session.exec(query).all()
         return [LinkRead.from_model(l) for l in links]

@@ -1,12 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query, Request
+from fastapi import APIRouter, HTTPException, status, Query, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
-from sqlmodel import Session
-from typing import Optional, List
-from app.database import get_session
+from typing import List
 from app.schemas import (
-    LinkCreate, LinkRead, LinkList, SearchQuery, SearchResponse, SearchResult, ErrorResponse
+    LinkCreate, LinkRead, LinkList, SearchResponse, SearchResult
 )
 from app.services.pipeline import (
     process_link, get_link, get_links, delete_link, search_links, get_all_tags

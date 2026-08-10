@@ -26,12 +26,6 @@ def generate_embedding(text: str) -> List[float]:
     return embedding.tolist()
 
 
-def generate_embeddings(texts: List[str]) -> List[List[float]]:
-    model = get_embedder()
-    embeddings = model.encode(texts, normalize_embeddings=True)
-    return embeddings.tolist()
-
-
 def _prepare_metadata(metadata: dict) -> dict:
     """Convert metadata values to ChromaDB-compatible types (str, int, float, bool)."""
     prepared = {}

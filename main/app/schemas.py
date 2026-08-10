@@ -45,11 +45,6 @@ class LinkList(BaseModel):
     total: int
 
 
-class SearchQuery(BaseModel):
-    q: str
-    limit: int = 10
-
-
 class SearchResult(BaseModel):
     id: int
     url: str
@@ -63,7 +58,3 @@ class SearchResponse(BaseModel):
     results: List[SearchResult]
     query: str
     total: int
-
-
-class ErrorResponse(BaseModel):
-    detail: str
