@@ -21,6 +21,7 @@ summaries, and semantic search all happen on your machine (via Ollama).
 - **Semantic search** — natural-language search over your saved links
 - **Browse / filter** — card grid filterable by tag, sorted by date saved
 - **Delete** — simple confirmed removal from DB + vector store
+- **Save feedback** — real-time processing indicator, success/error messages
 
 ---
 
@@ -70,6 +71,15 @@ UrlDock/
 ├── scripts/              # Utilities (e.g. models comparison runner)
 └── testing/              # pytest suite + fixtures
 ```
+
+---
+
+## UI Features
+
+### Save Link Feedback
+- **Processing** — "Processing link, Please wait..." shows immediately when you click Save
+- **Success** — "Link Processed Successfully... Please reload the page" on success
+- **Error** — "Unable to Process Link... Not able to process link, please try a different link" on failure (Cloudflare, paywalls, JS-rendered sites, etc.)
 
 ---
 
