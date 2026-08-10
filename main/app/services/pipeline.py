@@ -99,14 +99,13 @@ async def get_link(link_id: int) -> Optional[LinkRead]:
 async def get_links(tag: Optional[str] = None, limit: int = 50, offset: int = 0, sort: str = "newest") -> List[LinkRead]:
     with Session(engine) as session:
         if sort == "oldest":
-            query = select(Link).order_by(Link.date_saved.asc())
+            query = select(Link).where(Link.fetch_status == "ok").order_by(Link.date_saved.asc())
         elif sort == "title":
-            query = select(Link).order_by(Link.title.asc())
+            query = select(Link).where(Link.fetch_status == "ok").order_by(Link.title.asc())
         elif sort == "most-tags":
-            # We'll sort in Python after fetching since tags are JSON
-            query = select(Link)
+            query = select(Link).where(Link.fetch_status == "ok")
         else:  # newest (default)
-            query = select(Link).order_by(Link.date_saved.desc())
+            query = select(Link).where(Link.fetch_status == "ok").order_by(Link.date_saved.desc())
         
         if tag:
             all_links = session.exec(query).all()
@@ -118,7 +117,6 @@ async def get_links(tag: Optional[str] = None, limit: int = 50, offset: int = 0,
                 filtered.sort(key=lambda l: l.title or "")
             elif sort == "oldest":
                 filtered.sort(key=lambda l: l.date_saved)
-            # newest is already sorted by query
             
             filtered = filtered[offset:offset + limit]
             return [LinkRead.from_model(l) for l in filtered]
@@ -153,7 +151,7 @@ async def search_links(query: str, limit: int = 10) -> List[dict]:
 
 async def get_all_tags() -> List[str]:
     with Session(engine) as session:
-        links = session.exec(select(Link)).all()
+        links = session.exec(select(Link).where(Link.fetch_status == "ok")).all()
         all_tags = set()
         for link in links:
             all_tags.update(link.get_tags_list())

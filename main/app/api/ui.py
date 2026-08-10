@@ -16,13 +16,14 @@ async def ui_add_link(request: Request, url: str = Form(...)):
     link, error = await process_link(str(url).strip())
     if error:
         return templates.TemplateResponse(
-            request, "partials/link_error.html",
-            {"error": error, "url": str(url)},
-            status_code=400,
+            request, "partials/save_message.html",
+            {"status": "error", "error": error, "url": str(url)},
+            status_code=200,
         )
     return templates.TemplateResponse(
-        request, "partials/link_card.html",
-        {"link": link},
+        request, "partials/save_message.html",
+        {"status": "success", "link": link},
+        status_code=200,
     )
 
 

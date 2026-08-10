@@ -7,7 +7,7 @@
     <section class="hero-section">
         <div class="hero-card">
             <h2>Add a Link</h2>
-            <form hx-post="/_ui/links" hx-target="#links-grid" hx-swap="afterbegin" class="link-form" hx-on::after-request="this.reset()">
+            <form hx-post="/_ui/links" hx-target="#save-message" hx-swap="innerHTML" hx-swap-error="innerHTML" class="link-form" hx-on::after-request="this.reset()">
                 <div class="form-group">
                     <label for="url" class="visually-hidden">URL to save</label>
                     <input 
@@ -21,13 +21,10 @@
                     >
                 </div>
                 <button type="submit" class="btn btn-primary btn-block" hx-disable-elt="this">
-                    <span class="btn-text">Save Link</span>
-                    <span class="btn-loading" hidden>
-                        <svg class="spinner" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="30 100" stroke-linecap="round"></circle></svg>
-                        Saving...
-                    </span>
+                    Save Link
                 </button>
             </form>
+            <div id="save-message" class="save-message" style="margin-top: 16px;"></div>
             <p class="form-hint">Paste any URL &mdash; we'll fetch, summarize, tag & make it searchable.</p>
         </div>
     </section>
@@ -132,5 +129,36 @@
         });
     }
 })();
+
+// Save link processing indicator
+document.addEventListener('htmx:beforeRequest', function(event) {
+    if (event.detail.path === '/_ui/links') {
+        const saveMessage = document.getElementById('save-message');
+        if (saveMessage) {
+            saveMessage.innerHTML = '<div class="save-processing"><span>Processing link, Please wait...</span></div>';
+        }
+    }
+});
+
+document.addEventListener('htmx:afterRequest', function(event) {
+    if (event.detail.path === '/_ui/links') {
+        const target = event.detail.target;
+        if (event.detail.successful) {
+            const firstCard = target.querySelector('.link-card');
+            if (firstCard) {
+                firstCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    }
+});
+
+document.addEventListener('htmx:responseError', function(event) {
+    let detail = event.detail;
+    let node = detail.target;
+    let message = node && node.querySelector('.save-message-card.error');
+    if (message) {
+        message.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+});
 </script>
 {% endblock %}

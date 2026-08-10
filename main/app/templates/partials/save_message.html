@@ -1,0 +1,30 @@
+{% if status == "success" %}
+<div class="save-message-card success">
+    <div class="save-message-content">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--success);">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <div class="save-message-text">
+            <span class="save-message-title">Link Processed Successfully</span>
+            <span class="save-message-detail">{{ link.title }}</span>
+        </div>
+        <span class="save-message-action">Please reload the page to see it in your collection.</span>
+    </div>
+</div>
+{% else %}
+<div class="save-message-card error">
+    <div class="save-message-content">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--danger);">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <div class="save-message-text">
+            <span class="save-message-title">Unable to Process Link</span>
+            <span class="save-message-detail">{{ url }}</span>
+        </div>
+        <span class="save-message-action">Not able to process link, please try a different link.</span>
+    </div>
+</div>
+{% endif %}
